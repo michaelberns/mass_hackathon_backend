@@ -1,0 +1,82 @@
+// Prisma schema: SQLite for local; switch to postgresql for Vercel production
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(cuid())
+  name              String
+  email             String   @unique
+  role              String   // "client" | "labour"
+  avatarUrl         String?
+  location          String?
+  bio               String?
+  profileCompleted  Boolean  @default(false)
+  skills            String?  // JSON array of strings (labour)
+  yearsOfExperience Int?     // labour
+  companyName      String?  // client
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  jobsCreated    Job[]
+  offers         Offer[]
+  notifications  Notification[]
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  location    String
+  budget      String   // stored as string for flexibility (e.g. "100-200", "50")
+  images      String   // JSON array of URLs
+  video       String?  // optional URL
+  status            String    @default("open") // "open" | "reserved" | "closed"
+  closeRequestedBy  String?   // "labour" when labour requested close; null otherwise
+  closedAt          DateTime? // set when job is closed (client close or approve labour request)
+  createdBy         String
+  latitude          Float?    // for map display
+  longitude         Float?    // for map display
+  skills            String?   // JSON array of strings (skills required)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  creator User    @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  offers  Offer[]
+}
+
+model Offer {
+  id           String   @id @default(cuid())
+  jobId        String
+  userId       String   // labour user
+  proposedPrice String
+  message      String
+  status       String   @default("pending") // "pending" | "accepted" | "rejected"
+  createdAt    DateTime @default(now())
+
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+  @@index([userId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // "NEW_OFFER" | "OFFER_ACCEPTED" | "OFFER_REJECTED"
+  jobId     String?
+  offerId   String?
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

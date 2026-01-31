@@ -7,12 +7,14 @@ export type OfferStatus = "pending" | "accepted" | "rejected";
 export interface UserCreate {
   name: string;
   email: string;
+  phone?: string;
   role: UserRole;
 }
 
 export interface UserUpdate {
   name?: string;
   email?: string;
+  phone?: string;
   role?: UserRole;
   avatarUrl?: string;
   location?: string;

@@ -65,6 +65,13 @@ export async function acceptOffer(offerId: string, userId: string) {
       data: { status: "reserved" },
     }),
   ]);
+  await createNotification({
+    userId: offer.userId,
+    type: "OFFER_ACCEPTED",
+    jobId: offer.jobId,
+    offerId: offer.id,
+    message: `Your offer was accepted for job: ${offer.job.title}`,
+  });
   return prisma.offer.findUnique({
     where: { id: offerId },
     include: { job: true, user: true },

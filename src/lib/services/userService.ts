@@ -42,6 +42,7 @@ export async function createUser(data: UserCreate) {
     data: {
       name: data.name,
       email: data.email,
+      phone: data.phone ?? null,
       role: data.role,
       profileCompleted: false,
     },
@@ -89,6 +90,7 @@ export async function updateUser(id: string, data: UserUpdate) {
   const updatePayload: Record<string, unknown> = {
     ...(data.name !== undefined && { name: data.name }),
     ...(data.email !== undefined && { email: data.email }),
+    ...(data.phone !== undefined && { phone: data.phone ?? null }),
     ...(data.role !== undefined && { role: data.role }),
     ...(data.avatarUrl !== undefined && { avatarUrl: data.avatarUrl ?? null }),
     ...(data.location !== undefined && { location: data.location ?? null }),

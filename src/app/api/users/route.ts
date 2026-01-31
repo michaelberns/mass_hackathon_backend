@@ -10,7 +10,7 @@ import type { UserCreate } from "@/types";
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as unknown;
-    const { name, email, role } = body as UserCreate;
+    const { name, email, phone, role } = body as UserCreate;
     if (!name || !email || !role) {
       return Response.json(
         { error: "name, email and role are required" },
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const user = await createUser({ name, email, role });
+    const user = await createUser({ name, email, phone, role });
     return Response.json(user, { status: 201 });
   } catch (error) {
     return apiErrorResponse(error);

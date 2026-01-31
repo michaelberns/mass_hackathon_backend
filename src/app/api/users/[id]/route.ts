@@ -34,6 +34,7 @@ export async function PUT(
     const data: UserUpdate = {};
     if (typeof body.name === "string") data.name = body.name;
     if (typeof body.email === "string") data.email = body.email;
+    if (typeof body.phone === "string" || body.phone === null) data.phone = body.phone ?? undefined;
     if (body.role === "client" || body.role === "labour") data.role = body.role;
     if (typeof body.avatarUrl === "string" || body.avatarUrl === null) data.avatarUrl = body.avatarUrl ?? undefined;
     if (typeof body.location === "string" || body.location === null) data.location = body.location ?? undefined;
